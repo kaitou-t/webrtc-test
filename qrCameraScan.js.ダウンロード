@@ -1,0 +1,239 @@
+/*
+ * カメラ起動・QRコード読み取りを行うJavaScript
+ *
+ * videoタグのカメラ起動及び停止を行う。
+ * 起動したカメラ内のQRコードを読み取りイベントにてデータ操作を行えるクラス。
+ *
+ * HTML5のカメラ制御についてはOS,ブラウザその他もろもろのセキュリティ概念による動きの違いなどがあるため
+ * コード修正には細心の注意と構造理解が必要となることに注意
+ *
+ * 参照ライブラリ：jsQR.js
+ *
+ * @author COSDAC 山本
+ * @version 2.6
+ *
+ * 2020/07/01 HTML5 getUserMedia android・iPhone用のブラウザへの対応
+ * 2020/07/05 カメラ起動・停止のタイミング調整
+ * 2020/07/05 バックカメラとフロントカメラの簡易切り替え
+ * 2020/07/13 スキャン処理を「setinterval」から「requestAnimationFrame」変更により負荷軽減
+ * 2020/07/22 連続スキャン処理の抑止対応
+ * 2020/08/05 JSのメモリ最適化など含む処理構造の全体見直し（コード書き換え、canvasのメモリ上作業化）
+ * 2020/08/21 カメラ映像と表示部のアスペクト比の違いによる最適対応
+ * 2020/09/11 JSQRの高速化
+ * 2020/09/14 cancelAnimationFrameがまれにタイミングで聞かない問題の対応
+ *
+ */
+
+function QrCameraScan() {
+
+	// プロパティ
+	this.video = null;
+	this.localStream = null;
+	this.canvas = null;
+
+	//イベント
+	this.onCameraStartSuccess = function(){} //カメラ起動時の正常処理
+	this.onCameraStartErr = function(){}     //カメラ起動時のエラー処理
+	this.onCameraStop = function(){}         //カメラ停止時の処理
+	this.onCameraImage = function(){}        //QRスキャン時の画像処理
+	this.onQRCode = function(){}             //QRスキャン時のデータ処理
+	this.onErr = function(){}             //エラー発生時
+
+	var _isScan = false;
+	var _scanFrameId = null;
+
+	//thisがwindowオブジェクト側を参照してしまう際に使用する変数
+	var _self = null;
+
+	// カメラ起動
+	this.cameraStart = function() {
+
+		_self = this;
+
+		// カメラと接続していたら停止
+		cameraStopTask(false);
+
+		//Video設定
+		var medias = {
+			audio: false,
+			video: {
+				//リア(後ろ)カメラ使用
+				facingMode: {
+					exact: "environment"
+				}
+			}
+		}
+
+		navigator.mediaDevices.getUserMedia(medias).then(function(stream) {
+			_self.video.srcObject = stream;
+			_self.localStream = stream;
+			//スキャン処理
+			_self.scan();
+			//カメラ起動正常時イベント
+			_self.onCameraStartSuccess();
+		}).catch(function(err) {
+			//フロントカメラ使用に切り替えて再度カメラ処理
+			medias.video.facingMode = "user"; //フロントカメラ設定
+			navigator.mediaDevices.getUserMedia(medias).then(function(stream) {
+				_self.video.srcObject = stream;
+				_self.localStream = stream;
+				//スキャン処理
+				_self.scan();
+				//カメラ起動正常時イベント
+				_self.onCameraStartSuccess();
+			}).catch(function(err) {
+				console.log(err);
+				//カメラ起動エラー時イベント
+				_self.onCameraStartErr();
+			});
+		});
+	}
+
+	// カメラの停止
+	this.cameraStop = function() {
+
+		_self = this;
+
+		// カメラと接続していたら停止
+		cameraStopTask(true);
+
+	}
+
+	// カメラの停止タスク
+	function cameraStopTask(isClick) {
+
+		// カメラと接続していたら停止
+		if (_self.localStream) {
+			_self.localStream.getVideoTracks().forEach(function(devise) {
+				devise.stop();
+			});
+			_self.localStream = null;
+			_self.video.srcObject = null;
+			_self._isScan = false;
+
+			//スキャン処理停止
+			cancelAnimationFrame(_self._scanFrameId);
+		}
+		if (isClick){
+			//カメラ停止時イベント
+			_self.onCameraStop();
+		}
+	}
+
+	// スキャン処理
+	this.scan = function () {
+		_self._scanFrameId = window.requestAnimationFrame(_self.scan);
+		scanTask();
+	}
+
+	// スキャンタスク
+	function scanTask() {
+		try {
+			if (_self.localStream && _self.video.videoWidth !=0 && _self.video.videoHeight !=0 && _self._isScan == false) {
+				_self._isScan = true;
+				//画面表示するのは、カメラ映像を拡大・縮小して余白をなくしたものになる。
+				//縦横比を維持するので、高さと幅の片方がカメラ映像をそのまま縮尺したもの、
+				//もう片方ははみ出るのでカメラ映像の中央を採用し、はみ出た部分(上下や左右)を均等にカットする。
+				//(object-fit: cover; の仕様)
+
+				//画面表示しているカメラ映像の一部(カット済み)と同じ映像をJSQRに渡したいので
+				//canvasにカメラ映像をコピーし、座標計算して画面表示と同じ内容を抜き出す。
+
+				//カメラ映像を無加工でcanvasにコピー
+				//var canvas = document.createElement("canvas");
+				var w = _self.video.videoWidth;    //カメラ映像：幅
+				var h = _self.video.videoHeight;   //カメラ映像：高さ
+				var cw = _self.video.clientWidth;  //表示枠    ：幅
+				var ch = _self.video.clientHeight; //表示枠    : 高さ
+
+				_self.canvas.setAttribute("width", w);
+				_self.canvas.setAttribute("height", h);
+				var ctx = _self.canvas.getContext('2d');
+				ctx.drawImage(_self.video, 0, 0, w, h);
+
+				//表示枠÷カメラ映像でカメラ映像を表示枠と同じサイズに伸縮する場合の高さと幅の倍率を計算
+				var scale_h = ch / h;
+				var scale_w = cw / w;
+
+				//カメラ映像の中で表示する領域サイズ(表示枠と同じ縦横比で、伸縮すれば表示枠にぴったり収まる)
+				var fit_h = 0;
+				var fit_w = 0;
+
+				//カメラ映像の中で表示する領域の左上座標
+				var position_h = 0;
+				var position_w = 0;
+
+				if (scale_h > scale_w) {
+					//高さ＞幅の倍率の場合、表示枠に合わせて伸縮すると幅がはみ出てカット
+
+					//高さはカメラ映像と一緒になる(カットなし)
+					fit_h = h;
+					position_h = 0;
+
+					//幅はカット
+					//高さが表示枠ぴったりになるように縮尺するので、幅も高さと同じ倍率で縮尺する。
+					//カメラ映像の表示する領域の幅 * 高さ倍率 = 表示枠の幅 になる。
+					//よって式を加工して、表示枠の幅÷高さ倍率 = カメラ映像の表示する領域の幅
+					fit_w = cw / scale_h;
+
+					position_w = (w - fit_w) / 2;  //表示しない幅(カメラ映像全体の幅 - 表示領域の幅)の半分が幅の開始位置。左右に半分ずつ非表示の幅がある。
+				} else {
+					//幅＞高さの倍率の場合、表示枠に合わせて伸縮すると高さがはみ出てカット
+
+					//幅はカメラ映像と一緒になる(カットなし)
+					fit_w = w;
+					position_w = 0;
+
+					//高さはカット
+					//幅が表示枠ぴったりになるように縮尺するので、高さも幅と同じ倍率で縮尺する。
+					//カメラ映像の表示する領域の高さ * 幅倍率 = 表示枠の高さ になる。
+					//よって式を加工して、表示枠の高さ÷幅倍率 = カメラ映像の表示する領域の高さ
+					fit_h = ch / scale_w;
+
+					position_h = (h - fit_h) / 2;  //表示しない高さ(カメラ映像全体の高さ - 表示する高さ)の半分が高さの開始位置。上下に半分ずつ非表示の高さがある。
+				}
+
+				//カメラの映像が撮れるようになる前に実行されることがある。その時はカメラ映像の高さと幅が0pxになるため
+				//ctx.getImageDataで落ちてしまうので、縦横10pxのダミー画像をカメラ映像として処理する
+				if (fit_w <= 0) fit_w = 10;
+				if (fit_h <= 0) fit_h = 10;
+
+				//アスペクト比の小数点第一までの比較で同じかコンソールチェック
+				var imageData = null;
+				if( Math.floor((fit_w / fit_h) * 10) / 10 == Math.floor((cw / ch) * 10) / 10){
+					//canvasにコピーしたカメラ映像(無加工)から、画面表示と同じ画像(非表示部分をカット済)をJSQR用に抜き出す
+					imageData = ctx.getImageData(position_w, position_h, fit_w ,fit_h);
+				}else{
+					//切り出し領域と表示領域のアスペクト比違い（計算間違い）
+					console.log('アスペクト比違い・・');
+					imageData = ctx.getImageData(0, 0, w ,h);
+				}
+
+				//var imageData = ctx.getImageData(0, 0, w, h);
+				//ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+				//テスト用
+				_self.onCameraImage(imageData);
+				var code = jsQR(imageData.data, imageData.width, imageData.height,{
+					  inversionAttempts: "dontInvert",
+				});
+
+				//if (code) {
+					//QRコード読み込み
+					_self.onQRCode(code);
+				//}
+
+				ctx = null;
+				imageData = null;
+				code = null;
+
+			}
+		} catch (e) {
+			console.log(e);
+			_self.onErr(e);
+		}
+		_self._isScan = false;
+
+	}
+
+}

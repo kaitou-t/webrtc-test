@@ -1,0 +1,127 @@
+
+/*--------------------------------------------------------------------------*
+ *  binding dblTap event for jQuery
+ *  MIT-style license.
+ *  http://blog.webcreativepark.net/2010/09/08-204058.html
+ *--------------------------------------------------------------------------*/
+
+/* ダブルタップイベント */
+jQuery.event.special.dblTap = {
+		setup : (function(){
+			var flag = false;
+			return function(){
+				$(this).click(function(){
+					if(flag){
+						$(this).trigger("dblTap");
+						flag = false;
+					}else{
+						flag = true;
+					}
+					setTimeout(function(){
+						flag = false;
+					},jQuery.event.special.dblTap.delay);
+				})
+			}
+		})() ,
+		delay : 500
+	}
+
+/*--------------------------------------------------------------------------*
+ *  binding hold event for jQuery
+ *  自作
+ *  注）IE11の場合、buttonタグが内包する要素へのマウスイベントが動かないので動作しない。
+ *     （buttonタグ以外なら問題ないのでdivタグなどにすればよい）
+ *     buttonタグでホールドとクリックを同居させるなら、button自体にホールドとクリックを判別させる形にすればよい
+ *--------------------------------------------------------------------------*/
+
+/* 長押しイベント */
+jQuery.event.special.hold = {
+		setup: (function () {
+
+			var ua = navigator.userAgent.toLowerCase();
+			var isSP = /iphone|ipod|ipad|android/.test(ua);
+			var eventStart = isSP ? 'touchstart' : 'mousedown';
+			var eventEnd   = isSP ? 'touchend' : 'mouseup';
+			var eventLeave = isSP ? 'touchmove' : 'mouseleave';
+
+			var holdtimer = '';
+			var ishold = null;
+			return function () {
+				$(this).bind(eventEnd, function () {
+					clearInterval(holdtimer);
+				}).bind(eventStart, function () {
+					ishold = false;
+					var self = this;
+					holdtimer = setTimeout(function () {
+						$(self).trigger("hold");
+						ishold = true;
+					}, jQuery.event.special.hold.delay);
+				}).click(function(e){
+					if (ishold){
+						e.stopPropagation();
+						ishold = false;
+					}
+				}).bind("contextmenu",function () {
+					return false;
+				})
+			}
+		})(),
+		delay: 1000
+	}
+
+/*--------------------------------------------------------------------------*
+ * 疑似モーダルウィンドウを出した場合に背景がスマホだとスクロールする問題の回避策
+ * 参考：https://myscreate.com/optional-modal/
+ *--------------------------------------------------------------------------*/
+function bodyScrollPrevent(flag, modal) {
+
+	let scrollPosition;
+	const body = document.getElementsByTagName('body')[0];
+
+	//iOS(iPad含む)の判定
+	//const ua = window.navigator.userAgent.toLowerCase();
+	//const isiOS = ua.indexOf('iphone') > -1 || ua.indexOf('ipad') > -1 || ua.indexOf('macintosh') > -1 && 'ontouchend' in document;
+	const isiOS = navigator.userAgent.match(/(iPhone|iPad|iPod)/i);
+
+	//スクロールバーの幅
+	const scrollBarWidth = window.innerWidth - document.body.clientWidth;
+
+	if (flag) {
+		body.style.paddingRight = scrollBarWidth + 'px';
+		//iOSの場合はposition:fixedの処理
+		if (isiOS) {
+			scrollPosition = -window.pageYOffset;
+			body.style.position = 'fixed';
+			body.style.width = '100%';
+			body.style.top = scrollPosition + 'px';
+		//それ以外はoverflow:hiddenでシンプルな処理
+		} else {
+			body.style.overflow = 'hidden';
+		}
+	} else if (!flag) {//elseでもOK。わかりやすく!flagとしているだけ
+		//非表示にする際にモーダルがtransitionをしている場合、transitionが終わってからスタイルをリセットする
+		addEventListenerOnce(modal, 'transitionend', function () {
+			body.style.paddingRight = '';
+			if (isiOS) {
+				scrollPosition = parseInt(body.style.top.replace(/[^0-9]/g, ''));
+				body.style.position = '';
+				body.style.width = '';
+				body.style.top = '';
+				window.scrollTo(0, scrollPosition);
+			} else {
+				body.style.overflow = '';
+			}
+		});
+	}
+
+	//transitionendイベントを一回だけ呼び出すための関数（これをやらないと二回目以降のモーダル処理に影響がある）
+	function addEventListenerOnce(node, event, callback) {
+		const handler = function (e) {
+			callback.call(this, e);
+			node.removeEventListener(event, handler);
+		};
+		node.addEventListener(event, handler);
+	}
+
+}
+

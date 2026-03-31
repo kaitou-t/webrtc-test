@@ -1,0 +1,102 @@
+// 初期化
+$(document).ready(function() {
+    // 全リンクのクリックイベントを submittableObject_Click で取得
+    for (var i = 0; i < document.links.length; i ++)
+    {
+        var item = document.links[i]
+
+        Object.Aspect.around(item, "onmousedown", checkLoading);
+    }
+
+    // 全ボタンのクリックイベントを submittableObject_Click で取得
+    for (var i = 0; i < document.forms.length; i ++)
+    {
+        for (var j = 0; j < document.forms[i].elements.length; j ++)
+        {
+            var item = document.forms[i].elements[j]
+
+            if (item.type == "button" ||
+                item.type == "submit" ||
+                item.type == "reset")
+            {
+                Object.Aspect.around(item, "onclick", checkLoading);
+            }
+        }
+    }
+
+    return true;
+});
+
+// 2度押し抑止アスペクト
+var checkLoading = function(invocation)
+{
+    if (IsDocumentLoading())
+    {
+        alert(systemsJsDoublesubmit);
+        return false;
+    }
+
+    return invocation.proceed();
+}
+
+// 画面描画が終わったかどうか
+function IsDocumentLoading()
+{
+    return (document.readyState != null &&
+            document.readyState != "complete" &&
+            document.readyState != "loaded" &&
+            document.readyState != "interactive");
+}
+
+// アスペクト用
+Object.Aspect =
+{
+    _around: function(target, methodName, aspect)
+    {
+        var method = target[methodName];
+        target[methodName] = function()
+        {
+            var invocation =
+            {
+                "target" : this,
+                "method" : method,
+                "methodName" : methodName,
+                "arguments" : arguments,
+                "proceed" : function()
+                {
+                    if (!method)
+                    {
+                        return true;
+                    }
+                    return method.apply(target, this.arguments);
+                }
+            };
+            return aspect.apply(null, [invocation]);
+        };
+    },
+    around: function(target, methodName, aspect)
+    {
+        this._around(target, methodName, aspect);
+    }
+}
+
+// ajax初期化
+jQuery.ajaxSetup({
+	async   : true,
+	cache   : false,
+	timeout : 0,
+	type    : "GET",
+	error   : function(XMLHttpRequest, textStatus, errorThrown) {
+		var status = XMLHttpRequest.status
+		if (status == 404) {
+			alert(systemsFatalAjaxMsg.replace("{0}", systemsNotfoundpage));
+		} else if (status == 403) {
+			alert(systemsFatalAjaxMsg.replace("{0}", systemsSessiontimeout));
+		} else if (textStatus == "timeout") {
+			alert(systemsFatalAjaxMsg.replace("{0}", systemsTimeout));
+		} else {
+			alert(systemsFatalAjaxMsg.replace("{0}", systemsFatalPrefix + " (" + status + ") " + errorThrown));
+		}
+		return;
+	}
+});
