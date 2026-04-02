@@ -694,8 +694,9 @@ document.getElementById("locationClear").addEventListener('click', function() {
 		$("#locationCd").val("").change();
 	}
 
-        // ★ これだけ追加
-        resumeVideoAfterClear();
+		setTimeout(function() {
+        	resumeVideoAfterClear();
+		}, 100);
 
 }, false);
 
@@ -708,9 +709,9 @@ document.getElementById("manageClear").addEventListener('click', function() {
 		$("#manageNo").val("").change();
 	}
 
-
-        // ★ これだけ追加
-        resumeVideoAfterClear();
+		setTimeout(function() {
+        	resumeVideoAfterClear();
+		}, 100);
 
 }, false);
 
