@@ -252,33 +252,34 @@ function QrCameraScan() {
 
                 }
 
-                // ===== バーコード読み取り（ZXing：追加）=====
-                if (_zxingReader) {
-                    try {
-                        // ImageData → 一時 canvas
-                        var tmpCanvas = document.createElement('canvas');
-                        tmpCanvas.width = imageData.width;
-                        tmpCanvas.height = imageData.height;
-                        var tctx = tmpCanvas.getContext('2d');
-                        tctx.putImageData(imageData, 0, 0);
+				// ===== バーコード読み取り（ZXing：追加）=====
+				if (_zxingReader) {
 
-                        var result = _zxingReader.decodeFromCanvas(tmpCanvas);
-                        if (result && result.text) {
+				    // decodeFromCanvas は Promise を返す
+				    _zxingReader.decodeFromCanvas(tmpCanvas)
+				        .then(function (result) {
 
-							// バーコードも QR と同じ onQRCode に流す
-							_self.onQRCode({
-							    data: result.text,
-							    format: result.format,
-							    type: "BARCODE"
-							});
+				            // ✅ 認識成功
+				            _self.onQRCode({
+				                data: result.text,
+				                format: result.format,
+				                type: "BARCODE"
+				            });
 
-                            _self._isScan = false;
-                            return;
-                        }
-                    } catch (e) {
-                        // 読めなかった場合は無視（例外が正常系）
-                    }
-                }
+				        })
+				        .catch(function () {
+				            // ❌ 認識できなかった場合
+				            // ZXing は失敗時に例外を投げる仕様なので何もしない
+				        })
+				        .finally(function () {
+				            // ✅ 必ず解除（次フレームを許可）
+				            _self._isScan = false;
+				        });
+
+				    // 非同期処理に入るので、ここで scanTask を抜ける
+				    return;
+				}
+
 
 				ctx = null;
 				imageData = null;
