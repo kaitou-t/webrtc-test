@@ -694,6 +694,9 @@ document.getElementById("locationClear").addEventListener('click', function() {
 		$("#locationCd").val("").change();
 	}
 
+        // ★ これだけ追加
+        resumeVideoAfterClear();
+
 }, false);
 
 //機器のクリア
@@ -704,6 +707,10 @@ document.getElementById("manageClear").addEventListener('click', function() {
 			'[機器コード]を消去します。\nよろしいですか？')) {
 		$("#manageNo").val("").change();
 	}
+
+
+        // ★ これだけ追加
+        resumeVideoAfterClear();
 
 }, false);
 
@@ -1110,6 +1117,20 @@ function setChildTagByLogList() {
 		target.insertBefore(newTag, target.children[0]);
  	}
 }
+
+
+function resumeVideoAfterClear() {
+    // iOS Safari のみ対象
+    if (!/iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
+
+    if (qrScan && qrScan.video && qrScan.video.srcObject) {
+        const p = qrScan.video.play();
+        if (p && typeof p.catch === 'function') {
+            p.catch(function(){ /* Safari対策：失敗しても無視 */ });
+        }
+    }
+}
+
 
 </script>
 
