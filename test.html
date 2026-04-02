@@ -694,9 +694,9 @@ document.getElementById("locationClear").addEventListener('click', function() {
 		$("#locationCd").val("").change();
 	}
 
-		setTimeout(function() {
-        	resumeVideoAfterClear();
-		}, 100);
+	setTimeout(function() {
+    	resumeVideoAfterClear();
+	}, 100);
 
 }, false);
 
@@ -709,9 +709,9 @@ document.getElementById("manageClear").addEventListener('click', function() {
 		$("#manageNo").val("").change();
 	}
 
-		setTimeout(function() {
-        	resumeVideoAfterClear();
-		}, 100);
+	setTimeout(function() {
+    	resumeVideoAfterClear();
+	}, 100);
 
 }, false);
 
@@ -960,6 +960,10 @@ document.getElementById("stocktaking").addEventListener('click', function() {
 					alert("* error[" + jqXHR.status + "],[" + jqXHR.statusText + "],[" +
 						textStatus + "], " + errorThrown.message);
 
+					setTimeout(function() {
+				    	resumeVideoAfterClear();
+					}, 100);
+	
 					if (jqXHR.status == "403") {
 						//ログインセッションエラーの場合はエラー画面へ
 						location='/LeaseAssetManagementQRScan/sessionError/';
