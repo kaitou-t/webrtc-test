@@ -37,6 +37,7 @@ function QrCameraScan() {
 	this.onCameraStop = function(){}         //カメラ停止時の処理
 	this.onCameraImage = function(){}        //QRスキャン時の画像処理
 	this.onQRCode = function(){}             //QRスキャン時のデータ処理
+	this.onBarcode = function(){} //バーコード検出時
 	this.onErr = function(){}             //エラー発生時
 
 	var _isScan = false;
@@ -44,6 +45,27 @@ function QrCameraScan() {
 
 	//thisがwindowオブジェクト側を参照してしまう際に使用する変数
 	var _self = null;
+
+    // ★追加：ZXing Reader（外部で ZXing を読み込んでいる前提）
+    var _zxingReader = null;
+    if (window.ZXing && ZXing.BrowserMultiFormatReader) {
+        // 必要なバーコード種別だけに絞ると高速
+        try {
+            const hints = new Map();
+            hints.set(
+                ZXing.DecodeHintType.POSSIBLE_FORMATS,
+                [
+                    ZXing.BarcodeFormat.CODE_128,
+                    ZXing.BarcodeFormat.CODE_39,
+                    ZXing.BarcodeFormat.EAN_13,
+                    ZXing.BarcodeFormat.EAN_8
+                ]
+            );
+            _zxingReader = new ZXing.BrowserMultiFormatReader(hints);
+        } catch(e) {
+            _zxingReader = new ZXing.BrowserMultiFormatReader();
+        }
+    }
 
 	// カメラ起動
 	this.cameraStart = function() {
@@ -218,10 +240,45 @@ function QrCameraScan() {
 					  inversionAttempts: "dontInvert",
 				});
 
-				//if (code) {
-					//QRコード読み込み
-					_self.onQRCode(code);
-				//}
+                if (code && code.data) {
+                    // QR 認識成功
+
+				    _self.onQRCode({
+				        data: code.data,
+				        type: "QR"
+				    });
+				    _self._isScan = false;
+				    return;
+
+                }
+
+                // ===== バーコード読み取り（ZXing：追加）=====
+                if (_zxingReader) {
+                    try {
+                        // ImageData → 一時 canvas
+                        var tmpCanvas = document.createElement('canvas');
+                        tmpCanvas.width = imageData.width;
+                        tmpCanvas.height = imageData.height;
+                        var tctx = tmpCanvas.getContext('2d');
+                        tctx.putImageData(imageData, 0, 0);
+
+                        var result = _zxingReader.decodeFromCanvas(tmpCanvas);
+                        if (result && result.text) {
+
+							// バーコードも QR と同じ onQRCode に流す
+							_self.onQRCode({
+							    data: result.text,
+							    format: result.format,
+							    type: "BARCODE"
+							});
+
+                            _self._isScan = false;
+                            return;
+                        }
+                    } catch (e) {
+                        // 読めなかった場合は無視（例外が正常系）
+                    }
+                }
 
 				ctx = null;
 				imageData = null;

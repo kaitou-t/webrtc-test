@@ -38,6 +38,8 @@
 <script type="text/javascript" src="./system.js.ダウンロード"></script>
 <script type="text/javascript" src="./globalize.js.ダウンロード"></script>
 
+<script src="https://unpkg.com/@zxing/library@latest"></script>
+
 <script type="text/javascript">
 <!--
 
@@ -311,6 +313,7 @@ $(function() {
 
 <script type="text/javascript">
 
+
 //モーダルの初期化
 $(document).ready(function(){
 	$('.modal').modal({
@@ -398,6 +401,7 @@ var sound = document.getElementById("Sound");
 var lastCode = '';
 // QR読み取りクラス
 var qrScan = new QrCameraScan;
+
 qrScan.video = document.getElementById('myVideo');
 qrScan.canvas = document.createElement('canvas');
 
