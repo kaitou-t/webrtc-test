@@ -235,7 +235,17 @@ function QrCameraScan() {
 				});
 
 				if (code) {
-				    _self.onQRCode(code);
+	
+				    _self.onQRCode({
+					    data: code.data,
+					    text: code.data,
+					    type: "QR",
+					    format: "QR_CODE",
+					    raw: code,
+				        source: "jsQR",
+				        timestamp: Date.now()
+				    });
+
 				    _self._isScan = false;
 				    return;
 				}
@@ -256,9 +266,13 @@ function QrCameraScan() {
 				reader.decodeFromCanvas(tmpCanvas)
 				    .then(function (result) {
 				        _self.onQRCode({
-				            data: result.text,
-				            format: result.format,
-				            type: "BARCODE"
+						    data: result.text,
+						    text: result.text,
+						    type: "BARCODE",
+						    format: result.format,
+						    raw: result,
+				            source: "ZXing",
+				            timestamp: Date.now()
 				        });
 				    })
 				    .catch(function () {
