@@ -37,7 +37,6 @@ function QrCameraScan() {
 	this.onCameraStop = function(){}         //カメラ停止時の処理
 	this.onCameraImage = function(){}        //QRスキャン時の画像処理
 	this.onQRCode = function(){}             //QRスキャン時のデータ処理
-	this.onBarcode = function(){} //バーコード検出時
 	this.onErr = function(){}             //エラー発生時
 
 	var _isScan = false;
@@ -45,27 +44,6 @@ function QrCameraScan() {
 
 	//thisがwindowオブジェクト側を参照してしまう際に使用する変数
 	var _self = null;
-
-    // ★追加：ZXing Reader（外部で ZXing を読み込んでいる前提）
-    var _zxingReader = null;
-    if (window.ZXing && ZXing.BrowserMultiFormatReader) {
-        // 必要なバーコード種別だけに絞ると高速
-        try {
-            const hints = new Map();
-            hints.set(
-                ZXing.DecodeHintType.POSSIBLE_FORMATS,
-                [
-                    ZXing.BarcodeFormat.CODE_128,
-                    ZXing.BarcodeFormat.CODE_39,
-                    ZXing.BarcodeFormat.EAN_13,
-                    ZXing.BarcodeFormat.EAN_8
-                ]
-            );
-            _zxingReader = new ZXing.BrowserMultiFormatReader(hints);
-        } catch(e) {
-            _zxingReader = new ZXing.BrowserMultiFormatReader();
-        }
-    }
 
 	// カメラ起動
 	this.cameraStart = function() {
@@ -240,46 +218,10 @@ function QrCameraScan() {
 					  inversionAttempts: "dontInvert",
 				});
 
-                if (code && code.data) {
-                    // QR 認識成功
-
-				    _self.onQRCode({
-				        data: code.data,
-				        type: "QR"
-				    });
-				    _self._isScan = false;
-				    return;
-
-                }
-
-				// ===== バーコード読み取り（ZXing：追加）=====
-				if (_zxingReader) {
-
-				    // decodeFromCanvas は Promise を返す
-				    _zxingReader.decodeFromCanvas(tmpCanvas)
-				        .then(function (result) {
-
-				            // ✅ 認識成功
-				            _self.onQRCode({
-				                data: result.text,
-				                format: result.format,
-				                type: "BARCODE"
-				            });
-
-				        })
-				        .catch(function () {
-				            // ❌ 認識できなかった場合
-				            // ZXing は失敗時に例外を投げる仕様なので何もしない
-				        })
-				        .finally(function () {
-				            // ✅ 必ず解除（次フレームを許可）
-				            _self._isScan = false;
-				        });
-
-				    // 非同期処理に入るので、ここで scanTask を抜ける
-				    return;
-				}
-
+				//if (code) {
+					//QRコード読み込み
+					_self.onQRCode(code);
+				//}
 
 				ctx = null;
 				imageData = null;
