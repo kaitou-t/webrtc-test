@@ -24,6 +24,19 @@
  *
  */
 
+
+var _zxingReader = null;
+
+function getZXingReader() {
+    if (_zxingReader) return _zxingReader;
+
+    if (window.ZXingBrowser && ZXingBrowser.BrowserMultiFormatReader) {
+        _zxingReader = new ZXingBrowser.BrowserMultiFormatReader();
+        return _zxingReader;
+    }
+    return null;
+}
+
 function QrCameraScan() {
 
 	// プロパティ
@@ -122,9 +135,12 @@ function QrCameraScan() {
 
 	// スキャン処理
 	this.scan = function () {
-		_self._scanFrameId = window.requestAnimationFrame(_self.scan);
-		scanTask();
-	}
+	    if (!_self._isScan) {
+	        scanTask();
+	    }
+	    _self._scanFrameId = window.requestAnimationFrame(_self.scan);
+	};
+
 
 	// スキャンタスク
 	function scanTask() {
@@ -218,21 +234,48 @@ function QrCameraScan() {
 					  inversionAttempts: "dontInvert",
 				});
 
-				//if (code) {
-					//QRコード読み込み
-					_self.onQRCode(code);
-				//}
+				if (code) {
+				    _self.onQRCode(code);
+				    _self._isScan = false;
+				    return;
+				}
 
-				ctx = null;
-				imageData = null;
-				code = null;
+				// ===== ここから 1Dバーコード（ZXing）=====
+				var reader = getZXingReader();
+				if (!reader) {
+				    _self._isScan = false;
+				    return;
+				}
+
+				var fullImageData = ctx.getImageData(0, 0, w, h);
+				var tmpCanvas = document.createElement("canvas");
+				tmpCanvas.width = w;
+				tmpCanvas.height = h;
+				tmpCanvas.getContext("2d").putImageData(fullImageData, 0, 0);
+
+				reader.decodeFromCanvas(tmpCanvas)
+				    .then(function (result) {
+				        _self.onQRCode({
+				            data: result.text,
+				            format: result.format,
+				            type: "BARCODE"
+				        });
+				    })
+				    .catch(function () {
+				        // 読めないのは正常
+				    })
+				    .finally(function () {
+				        _self._isScan = false;
+				    });
+
+				return;
 
 			}
 		} catch (e) {
 			console.log(e);
 			_self.onErr(e);
+			_self._isScan = false;
 		}
-		_self._isScan = false;
 
 	}
 
