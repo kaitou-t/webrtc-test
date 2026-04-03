@@ -306,7 +306,16 @@ $(function() {
 
 
 </form><script type="text/javascript" src="./smartPhone.js.ダウンロード"></script>
-<script type="text/javascript" src="./zxing-browser.min.js"></script>
+
+<script>
+  console.log("before zxing");
+</script>
+<script src="./zxing-browser.min.js"></script>
+<script>
+  console.log("after zxing", window.ZXingBrowser);
+</script>
+
+
 <script type="text/javascript" src="./jsQR.js.ダウンロード"></script>
 <script type="text/javascript" src="./qrCameraScan.js.ダウンロード"></script>
 
