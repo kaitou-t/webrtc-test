@@ -52,7 +52,6 @@ function QrCameraScan() {
 	this.onQRCode = function(){}             //QRスキャン時のデータ処理
 	this.onErr = function(){}             //エラー発生時
 
-	var _isScan = false;
 	var _scanFrameId = null;
 
 	//thisがwindowオブジェクト側を参照してしまう際に使用する変数
@@ -62,6 +61,7 @@ function QrCameraScan() {
 	this.cameraStart = function() {
 
 		_self = this;
+		_self._isScan = false;
 
 		// カメラと接続していたら停止
 		cameraStopTask(false);
