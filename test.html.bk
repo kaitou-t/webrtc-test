@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<!-- saved from url=(0059)https://localhost:9443/LeaseAssetManagementQRScan/mainMenu/ -->
+<html lang="ja">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+	<meta name="robots" content="noindex, nofollow" />
+	<title>〇〇[機器棚卸]</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script type="text/javascript">
+
+	
+	var systemsJsDoublesubmit = "処理中です・・・";
+	var systemsFatalPrefix = "エラー：";
+	var systemsFatalAjaxMsg = "非同期通信でエラーが発生しました。\n{0}";
+	var systemsTimeout = "処理がタイムアウトしました。";
+	var systemsSessiontimeout = "システムからログアウトしています。\nシステムにログインし直して下さい。";
+	var systemsNotfoundpage = "ページが見つかりません。";
+
+</script>
+
+<!-- CSS  -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="./materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+<link href="./jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+<link href="./jquery-ui.css" type="text/css" rel="stylesheet" media="screen,projection">
+<link href="./style.css" type="text/css" rel="stylesheet">
+
+<!-- JS  -->
+<script type="text/javascript" src="./jquery-3.3.1.min.js.ダウンロード"></script>
+<script type="text/javascript" src="./materialize.min.js.ダウンロード"></script>
+
+<script type="text/javascript" src="./jquery-ui.js.ダウンロード"></script>
+<script type="text/javascript" src="./jquery.ui.datepicker-ja.js.ダウンロード"></script>
+<script type="text/javascript" src="./jquery.dataTables.min.js.ダウンロード"></script>
+<script type="text/javascript" src="./dataTables.fixedColumns.min.js.ダウンロード"></script>
+<script type="text/javascript" src="./dataTables.buttons.min.js.ダウンロード"></script>
+<script type="text/javascript" src="./system.js.ダウンロード"></script>
+<script type="text/javascript" src="./globalize.js.ダウンロード"></script>
+
+<script type="text/javascript">
+<!--
+
+//リストボックスに項目セット
+function setListBox(targetSelector, itemData) {
+	var list = [];
+	$.each(itemData, function(index, item) {
+		list.push($("<option>").val(item.value).text(item.label).get(0));
+	});
+	$(targetSelector)
+	.html(list)
+	.trigger('change');
+}
+
+//リストボックスに項目セット
+function setDropDownList(url, params, target) {
+	$.ajax({
+		"async": false,
+		"type": 'POST',
+		"url": url,
+		"dataType": 'json',
+		"data": params,
+		success: function( data, textStatus, jqXHR ) {
+			console.log(data);
+			var list = [];
+			$.each(data, function(index, item) {
+				list.push( $("<option>").val(item.value).text(item.label).get(0) );
+			});
+			$(target)
+			.html(list)
+			.trigger('change');
+		},
+		timeout: 5000, 
+		error: function( jqXHR, textStatus, errorThrown ) {
+			if(textStatus=="timeout") {
+				alert("response timeout エラーが発生しました。もう一度行って下さい。");
+			} else {
+				alert( "* error[" + jqXHR.status + "],[" + jqXHR.statusText + "],[" + textStatus + "], " + errorThrown.message );
+			}
+		}
+	});
+}
+
+//-->
+</script>
+
+
+
+</head>
+
+<body>
+<form name="codeScanActionForm" id="codeScanActionForm" method="post" action="https://localhost:9443/LeaseAssetManagementQRScan/codeScan/">
+<div><input type="hidden" name="org.apache.struts.taglib.html.TOKEN" value="1737577e642cb4c11ff76cf881b95e32"></div>
+<input type="hidden" name="listKisyCd" value="YA" id="listKisyCd">
+<input type="hidden" name="listHnbCd" value="0" id="listHnbCd">
+<input type="hidden" name="listBuCd" value="1" id="listBuCd">
+<input type="hidden" name="listShokCd" value="A29" id="listShokCd">
+<input type="hidden" name="listBmnCd" value="00" id="listBmnCd">
+<input type="hidden" name="year" value="2020" id="year">
+<input type="hidden" name="half" value="1" id="half">
+<audio id="Sound" src="./cs.mp3" preload="auto"></audio>
+<div id="page" style="position:relative;">
+
+	<div class="row" style="margin-bottom: 0px;">
+		<div id="header" class="col s12">
+			<div class="header">
+				<!--
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title></title>
+</head>
+<body>
+ -->
+
+<script type="text/javascript">
+$(function() {
+
+	//「ログアウト」押下時
+	$('#Exit').on('click', function(){
+		if ( window.confirm("ログアウトします。よろしいですか？")){
+			location.href='/LeaseAssetManagementQRScan/logout/';
+		}
+	});
+
+
+});
+</script>
+
+	<a href="https://localhost:9443/LeaseAssetManagementQRScan/mainMenu/#" class="white-text head-menu right"><i id="Exit" class="material-icons side-menu">exit_to_app</i></a>
+
+<!--
+</body>
+</html>
+ --><span class="menu-title" style="float: right !important;">機器棚卸</span>
+			</div>
+			<div class="clearfix">
+				<div class="userinfo">
+					<span class="item">会社名/AA:〇〇</span> <span class="item">社員番号/570AAAAAA</span> <span class="item">氏名/〇〇 太郎</span>
+				</div>
+				<!-- パンくず -->
+				<div>
+					<ol class="breadcrumb" itemscope="" itemtype="https://schema.org/BreadcrumbList">
+						<li itemprop="itemListElement" itemscope="" itemtype="https://schema.org/ListItem"><a itemprop="item" href="https://localhost:9443/LeaseAssetManagementQRScan/codeScan/backMenu/"> <span itemprop="name">メニュー</span>
+						</a>
+							<meta itemprop="position" content="1"></li>
+
+						<li itemprop="itemListElement" itemscope="" itemtype="https://schema.org/ListItem"><span id="test" itemprop="name">機器棚卸</span>
+							<meta itemprop="position" content="2"></li>
+					</ol>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="content">
+
+		<div id="Camera">
+			<div class="row" style="margin-bottom:0px;">
+				<div class="divider"></div>
+				<div id="myVideoControlBox">
+					<div class="col s6">
+						<div class="item-base">
+							<button type="button" id="cStart" class="waves-effect waves-cyan btn cyan darken-2">カメラ起動</button>
+						</div>
+					</div>
+					<div class="col s6">
+						<div class="item-base">
+							<button type="button" id="cEnd" class="waves-effect waves-cyan btn cyan darken-2 stopper">カメラ停止</button>
+						</div>
+					</div>
+				</div>
+
+		        <div class="col s12">
+		        	<div id="myVideoBox" style="-webkit-user-select:none;">
+			            <video id="myVideo" autoplay="" muted="" playsinline=""></video>
+			            <span id="cameraStop"><i class="material-icons stopper">videocam_off</i></span>
+
+			            <span id="fullScreen" style="display: block;"><div id="fullScreen_hold"><i class="material-icons">fullscreen</i></div></span>
+			            <span id="fullScreenExit" style="display:none"><i id="" class="material-icons">fullscreen_exit</i></span>
+		        	</div>
+		        	<div id="testBox" style="display:none;">
+		        		<canvas id="jsqr_imageData"></canvas>
+		        		<span id="testInfo" style="font-size:12px;"></span><br>
+		        		<span id="testTime1" style="font-size:12px;"></span><br>
+		        		<span id="testTime2" style="font-size:12px;"></span><br>
+		        		<span id="testErr" style="font-size:12px;color: red;">---</span>
+		        	</div>
+		        </div>
+				<div id="info_messages" class="col s12"><font color="#000000">カメラを起動してください</font></div>
+			</div>
+
+			<div id="scanReasultBox">
+			<div class="row" style="margin-bottom:0px;">
+				<div class="divider"></div>
+
+				<div class="col s7">
+					<div class="item-h70">
+						<label id="locationCd_label">ロケーションコード</label>
+						<input id="locationCd" type="text" class="browser-default" readonly="readonly">
+					</div>
+				</div>
+				<div class="col s5">
+					<div class="item-h70">
+						<button type="button" id="locationClear" class="waves-effect waves-cyan btn cyan darken-2" style="margin-top: 24px;">消去</button>
+					</div>
+				</div>
+				<div class="col s12" id="info_location">
+					<label>設置場所-ロケーション：</label>&nbsp;<span id="location_area"></span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="divider col s12"></div>
+				<div class="col s7">
+					<div class="item-h70">
+						<label id="manageNo_label">機器コード</label>
+						<input id="manageNo" type="text" class="browser-default" readonly="readonly">
+					</div>
+				</div>
+				<div class="col s5">
+					<div class="item-h70" style="margin-bottom: 5px;">
+						<button type="button" id="manageClear" class="waves-effect waves-cyan btn cyan darken-2" style="margin-top: 24px;">消去</button>
+					</div>
+				</div>
+				<div id="messages" class="col s12"><font color="#000000"></font></div>
+				<div class="col s12">
+					<div class="item-base" style="margin-top: 5px; display:flex;">
+
+						<!-- button→divタグに変更　（buttonタグではIEで内包する要素のイベントが動作しない為） -->
+						<div id="stocktaking" class="waves-effect waves-cyan btn cyan darken-2" style="padding: 0;"><div id="stocktaking_hold">棚卸処理</div></div>
+
+						<!-- 機能拡張用のボタンサンプル -->
+						<button type="button" id="stocktakingMenu" class="sideButton modal-trigger waves-effect waves-cyan btn cyan darken-2" data-target="Camera_log_modalview" style="display: none;">
+							<i class="material-icons">menu</i>
+						</button>
+					</div>
+				</div>
+			</div>
+			</div>
+
+		</div>
+   	</div>
+
+
+    <div class="row" style="margin-bottom:0px;">
+    	<div id="footer" class="col s12">
+    		<footer class="page-footer  cyan darken-3">
+	    <div class="footer-copyright  cyan darken-4">
+			<div class="container center">
+			    © 2026 。。。。。。。。。。。
+			</div>
+	    </div>
+	</footer></div>
+    </div>
+</div>
+
+<!-- ログ用のモーダル画面 -->
+<div id="Camera_log_modalview" class="modal modal-fixed-header modal-fixed-footer " tabindex="0">
+	<div class="modal-header">
+		<div class="row" style="margin-bottom:0px;">
+			<div class="col s12">
+    			<div class="item-base">
+					<h6>棚卸処理ログ（最新50件）</h6>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-content clearfix">
+		<div class="row" style="margin-bottom:0px;">
+			<div class="col s12">
+				<div class="item-base">
+					<ul id="logList">
+					<!-- li実装サンプル -->
+					<!--
+						<li>
+							<div class="marker bg0"></div>
+							<div class="itembox">
+								<div class="item1">2020/01/01 12:12:12</div>
+								<div class="item2">【ロケーション：YA0008010001】は存在しません</div>
+							</div>
+						</li>
+						<li>
+							<div class="marker bg-1"></div>
+							<div class="itembox">
+								<div class="item1">2020/01/01 12:12:12</div>
+								<div class="item2">【ロケーション：YA0008010001】は存在しませんテストテストテストテストテストテストテストテスト</div>
+							</div>
+						</li>
+					-->
+					</ul>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div class="modal-footer">
+		<div class="row " style="margin-bottom:0px; ">
+			<div class="col s12">
+	  			<div class="item-base">
+					<button type="button" id="close" class="modal-close waves-effect waves-cyan btn cyan darken-2">閉じる</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+</form><script type="text/javascript" src="./smartPhone.js.ダウンロード"></script>
+
+<script>
+  console.log("before zxing");
+</script>
+<script src="./zxing-browser.min.js"></script>
+<script>
+  console.log("after zxing", window.ZXingBrowser);
+</script>
+
+
+<script type="text/javascript" src="./jsQR.js.ダウンロード"></script>
+<script type="text/javascript" src="./qrCameraScan.js.ダウンロード"></script>
+
+<script type="text/javascript">
+
+//モーダルの初期化
+$(document).ready(function(){
+	$('.modal').modal({
+		dismissible: false, //枠外押下時に閉じない
+		outDuration:500,
+		inDuration:500,
+		onOpenStart: function () {
+			if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android)/i)) {
+				// スマホ・タブレット（iOS・Android）の場合の処理を記述
+				// モーダルが開く時...
+				bodyScrollPrevent(true);
+			}
+
+			setChildTagByLogList();
+
+		},
+		onOpenEnd: function () {
+			$('#close').focus();
+		},
+		onCloseStart:function () {
+			if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android)/i)) {
+				// スマホ・タブレット（iOS・Android）の場合の処理を記述
+				// モーダルが閉じられた時...
+				bodyScrollPrevent(false, $('#Camera_log_modalview')[0]);
+			}
+		}
+	});
+});
+
+/******************************/
+/* スキャンオプション */
+/******************************/
+function scanOptiont() {
+	this.op_isScanAlert = false;	// スキャン後にアラート表示するか
+	this.op_isScanSound = true;		// スキャン後にサウンド鳴らすか
+	this.op_isTestMode = true;		// パンくずの「機器棚卸」文字をダブルクリックで内部画像（解析用）を表示するか
+	this.op_isLogMode = true;		// 「機器棚卸」ボタン長押しでログ表示ボタンを表示するか
+	this.op_isLogGet = true;		// 「機器棚卸」ボタン自体の過去ログを取得するか
+	this.op_isDirectInput = true;	// 「ロケーションコード」、「機器コード」のラベルダブルクリックで直接入力モードに移行するか
+
+	this.__op_isFullscreen = null;
+	this.isFullscreenChange =  function (value) {
+		if (value !== this.__op_isFullscreen) {
+			this.__op_isFullscreen = value;
+			var eleFsicon = document.getElementById('fullScreen');
+			if(value){
+				//フルスクリーン用アイコンを表示する
+				eleFsicon.style.display = 'block';
+			}else{
+			    //フルスクリーンの場合は元に戻す
+				if(eleFsicon.style.display == 'none'){
+				   fullScreeExit();
+				}
+				//フルスクリーン用アイコンを非表示にする
+				eleFsicon.style.display = 'none';
+			}
+		}
+	}
+	Object.defineProperty(this, 'op_isFullscreen', {
+		set: function set (value) {this.isFullscreenChange(value);},get: function get () {return this.__op_isFullscreen;}
+	});
+	this.op_isFullscreen = true;	// フルスクリーン機能を有効にするか
+	this.op_isFullscreenEx = true;	// フルスクリーン機能の長押しで拡張フルスクリーンを動作させるか
+
+	this.isTest = false;
+	this.setCookie = function() {}
+	this.getCookie = function() {}
+	this.test = function() {
+		this.isTest = !this.isTest;
+		if (this.isTest) {
+			$('#testBox').css('display', 'block');
+		} else {
+			$('#testBox').css('display', 'none');
+		}
+	}
+}
+
+/******************************/
+/* カメラ処理 */
+/******************************/
+var scanOptiont = new scanOptiont;
+var inputMana = document.getElementById('manageNo');
+var inputLoc = document.getElementById('locationCd');
+var sound = document.getElementById("Sound");
+var lastCode = '';
+// QR読み取りクラス
+var qrScan = new QrCameraScan;
+qrScan.video = document.getElementById('myVideo');
+qrScan.canvas = document.createElement('canvas');
+
+$(document).ready(function() {
+	//メッセージの設定
+	setMessageByState();
+});
+
+sound.addEventListener('ended', function(event) {
+	var isiOS = navigator.userAgent.match(/(iPhone|iPad|iPod)/i);
+	if (isiOS){
+		sound.src = sound.src;
+		sound.load();
+	}
+	sound.currentTime = 0;
+});
+
+//クラスイベント定義
+//カメラ起動時の正常処理定義
+qrScan.onCameraStartSuccess = function() {
+
+	//メッセージの設定
+	setMessageByState();
+	//カメラ起動、カメラ停止ボタン非表示
+	$('#myVideoControlBox').slideUp('slow');
+
+
+	setTimeout(function() {
+		$('#cStart').prop('disabled', false);
+	}, 500);
+
+	//setTimeout(function() {
+	//	$("html,body").animate({scrollTop:$('.breadcrumb').offset().top-5});
+	//}, 500);
+}
+
+//カメラ起動時のエラー処理定義
+qrScan.onCameraStartErr = function() {
+	setMessage("カメラが見つかりません。", $("#info_messages"), 1);
+
+	setTimeout(function() {
+		$('#cStart').prop('disabled', false);
+	}, 500);
+}
+
+//カメラ停止時の正常処理定義
+qrScan.onCameraStop = function() {
+
+    //フルスクリーンの場合は元に戻す
+	if(document.getElementById('fullScreenExit').style.display == 'block'){
+	    fullScreeExit();
+	}
+
+	//メッセージの設定
+	setMessageByState();
+
+	//カメラ起動、カメラ停止ボタン表示
+	$('#myVideoControlBox').slideDown('slow');
+}
+
+//QRスキャン時の画像処理定義
+qrScan.onCameraImage = function(imageData) {
+	if (scanOptiont.isTest) {
+
+		var w = qrScan.video.videoWidth;    //カメラ映像：幅
+		var h = qrScan.video.videoHeight;   //カメラ映像：高さ
+		var cw = qrScan.video.clientWidth;  //表示枠    ：幅
+		var ch = qrScan.video.clientHeight; //表示枠    : 高さ
+
+		document.getElementById('jsqr_imageData').width = imageData.width;
+		document.getElementById('jsqr_imageData').height = imageData.height;
+		document.getElementById('jsqr_imageData').getContext('2d').putImageData(
+			imageData, 0, 0);
+
+		document.getElementById('testInfo').innerText = "カメラ映像（w,h）:" + w + "/" +
+			h + "　表示領域（w,h）:" + cw + "/" + ch + "　JSQR認識（w,h）:" + imageData.width +	"/" + imageData.height;
+
+		var date = new Date();
+		document.getElementById('testTime1').innerText = "onCameraImage: " +
+			("0"+date.getHours()).slice(-2) + ':' + ("0"+date.getMinutes()).slice(-2) + ':' + ("0"+date.getSeconds()).slice(-2) + '.' + date.getMilliseconds();
+
+	}
+}
+qrScan.onErr = function(e) {
+	if (scanOptiont.isTest) {
+		document.getElementById('testErr').innerText = e ;
+	}
+}
+
+//QRコードのデータ処理定義
+qrScan.onQRCode = function(code) {
+
+	if (scanOptiont.isTest) {
+		var codedata = null
+		if (code){
+			codedata = code.data;
+		}else{
+			codedata = null;
+		}
+		var date = new Date();
+		document.getElementById('testTime2').innerText = 'onQRCode: ' + codedata + ' ' + lastCode  + ' ' +
+		("0"+date.getHours()).slice(-2) + ':' + ("0"+date.getMinutes()).slice(-2) + ':' + ("0"+date.getSeconds()).slice(-2) + '.' + date.getMilliseconds() ;
+	}
+
+	if (code && code.data != null && code.data != '' && code.data != lastCode) {
+		console.log("Found QR code", code, code.data);
+		lastCode = code.data;
+		setTimeout(function() {
+			lastCode = null;
+		}, 2000);
+		//ロケーション→機器の順番で設定
+		if (!inputLoc.value) {
+
+			try {
+				if (scanOptiont.op_isScanSound) {sound.play(); sound.currentTime = 0;}
+			} catch (e) {
+				console.log(e);
+			}
+			$("#locationCd").val(code.data).change();
+
+			//[ロケーションコード]\nバーコードのスキャンが成功しました。
+			if (scanOptiont.op_isScanAlert) alert(
+				'[ロケーションコード]\nバーコードのスキャンが成功しました。');
+
+			//スキャンが成功したので、フルスクリーンの場合は元に戻す
+			if(document.getElementById('fullScreenExit').style.display == 'block'){
+				fullScreeExit();
+			}
+
+		} else if (!inputMana.value) {
+
+			try {
+				if (scanOptiont.op_isScanSound) {sound.play(); sound.currentTime = 0;}
+			} catch (e) {
+				console.log(e);
+			}
+			$("#manageNo").val(code.data).change();
+
+			//[機器コード]\nバーコードのスキャンが成功しました。
+			if (scanOptiont.op_isScanAlert) alert(
+				'[機器コード]\nバーコードのスキャンが成功しました。');
+
+			//スキャンが成功したので、フルスクリーンの場合は元に戻す
+			if(document.getElementById('fullScreenExit').style.display == 'block'){
+				fullScreeExit();
+		 	}
+		}
+	}
+}
+
+// カメラの起動
+document.getElementById("cStart").addEventListener('click', function() {
+	//navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || window.navigator.mozGetUserMedia;
+	$('#cStart').prop('disabled', true);
+	try {
+		sound.load();
+		sound.currentTime = 0;
+	} catch (e) {
+		console.log(e);
+	}
+
+	//カメラを起動する
+	qrScan.cameraStart();
+}, false);
+
+// カメラの停止
+$('.stopper').click( function() {
+	//カメラを停止する
+	qrScan.cameraStop();
+});
+
+var fullScreen_flg = null;
+
+//カメラ画像のフルスクリーンボタンをクリック
+$("#fullScreen").on('click',function(){
+
+	// カメラが起動していない時は、フルスクリーンにしない
+	if (qrScan.localStream == null) {
+		return false;
+	}
+
+	if (fullScreen_flg != null) {
+		return false;
+	}
+
+	fullScreen_flg = 1;
+	fullScreen();
+
+});
+
+//カメラ画像のフルスクリーンボタンを長押し
+$("#fullScreen_hold").bind("hold", function() {
+
+	if (!scanOptiont.op_isFullscreenEx) return false;
+
+	// カメラが起動していない時は、フルスクリーンにしない
+	if (qrScan.localStream == null) {
+		return false;
+	}
+
+	if (fullScreen_flg != null) {
+		return false;
+	}
+
+	fullScreen_flg = 2;
+	fullScreen();
+});
+
+//カメラ画像のフルスクリーン解除ボタンをクリック
+$("#fullScreenExit").on('click',function(){
+	fullScreeExit();
+});
+
+//カメラのフルスクリーンの設定処理
+function fullScreen(){
+
+	var eleVideo = document.getElementById('myVideoBox');
+	var eleFsicon = document.getElementById('fullScreen');
+	var eleFseicon = document.getElementById('fullScreenExit');
+
+	if (fullScreen_flg == 1) {
+		//videoタグにフルスクリーン用のclass追加
+	  	eleVideo.classList.add('fullScreen');
+		//videoタグ以外を非表示にする
+
+		//ブラウザのスクロールを下げているときにvideoタグより先に消えるとブラウザの高さが
+		//スクロールなしの状態になるのを回避
+	  	//document.getElementById('scanReasultBox').style.display = 'none';
+		$('#scanReasultBox').slideUp(1000);
+
+	} else {
+		//数値で指定するものはCSSのtransitionでアニメーションになるがposition,displayは要素の数字的な変動がないので
+		//アニメーションできないので高さだけ先に指定して、終了後にposition,displayを処理する
+		eleVideo.style.height = (document.documentElement.clientHeight -10) + "px";
+		setTimeout(function() {
+			eleVideo.classList.add('fullScreen2');
+		}, 1000);
+	}
+
+	//フルスクリーン用アイコンを非表示にする
+	eleFsicon.style.display = 'none';
+	//フルスクリーン解除用アイコンを表示する
+	eleFseicon.style.display = 'block';
+}
+
+//カメラのフルスクリーンの解除処理
+function fullScreeExit(){
+
+	var eleVideo = document.getElementById('myVideoBox');
+	var eleFsicon = document.getElementById('fullScreen');
+	var eleFseicon = document.getElementById('fullScreenExit');
+
+	if (fullScreen_flg == 1) {
+	   	//videoタグのフルスクリーン用のclass削除
+		eleVideo.classList.remove('fullScreen');
+		//videoタグ以外を表示にする
+
+		//ブラウザのスクロールを下げているときにvideoタグより先に表示されないとブラウザの高さが
+		//スクロールなしの状態になるのを回避
+		//document.getElementById('scanReasultBox').style.display = 'block';
+		$('#scanReasultBox').slideDown(400);
+
+	} else {
+		//数値で指定するものはCSSのtransitionでアニメーションになるがposition,displayは要素の数字的な変動がないので
+		//アニメーションできないので高さだけ先に指定して、終了後にposition,displayを処理する
+		eleVideo.style.height = "200px";
+		setTimeout(function() {
+			eleVideo.classList.remove('fullScreen2');
+			eleVideo.style.height = "";
+		}, 1000);
+
+	}
+
+ 	//フルスクリーン用アイコンを表示する
+	eleFsicon.style.display = 'block';
+	//フルスクリーン解除用アイコンを非表示にする
+	eleFseicon.style.display = 'none';
+
+	fullScreen_flg = null;
+
+}
+
+/******************************/
+/* 入力欄処理 */
+/******************************/
+
+//ロケーションのクリア
+document.getElementById("locationClear").addEventListener('click', function() {
+
+	//[ロケーションコード]を消去します。\nよろしいですか？
+	if (window.confirm(
+			'[ロケーションコード]を消去します。\nよろしいですか？')) {
+		$("#manageNo").val("").change();
+		$("#locationCd").val("").change();
+	}
+
+	setTimeout(function() {
+    	resumeVideoAfterClear();
+	}, 100);
+
+}, false);
+
+//機器のクリア
+document.getElementById("manageClear").addEventListener('click', function() {
+
+	//[機器コード]を消去します。\nよろしいですか？
+	if (window.confirm(
+			'[機器コード]を消去します。\nよろしいですか？')) {
+		$("#manageNo").val("").change();
+	}
+
+	setTimeout(function() {
+    	resumeVideoAfterClear();
+	}, 100);
+
+}, false);
+
+// 入力欄切り替え関数
+function modeInput(obj, isReadonly) {
+	if (isReadonly == false) {
+		obj.attr('readonly', false);
+		obj.focus();
+		obj.select();
+		obj.css('background-color', '#FFFFFF');
+	} else {
+		obj.attr('readonly', true);
+		obj.css('background-color', '#EEEEEE');
+	}
+}
+
+//ロケーションコードの直接入力制御
+$("#locationCd_label").on('dblclick', function() {
+	if (!scanOptiont.op_isDirectInput) return false;
+	modeInput($("#locationCd"), false);
+});
+$("#locationCd_label").bind("dblTap", function() {
+	if (!scanOptiont.op_isDirectInput) return false;
+	if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android)/i)) {
+		// スマホ・タブレット（iOS・Android）の場合の処理を記述
+		modeInput($("#locationCd"), false);
+	}
+});
+//ロケーションコード欄から抜けたとき
+$("#locationCd").on('blur', function() {
+	modeInput($("#locationCd"), true);
+});
+
+//機器コードの直接入力制御
+$("#manageNo_label").on('dblclick', function() {
+	if (!scanOptiont.op_isDirectInput) return false;
+	modeInput($("#manageNo"), false);
+});
+$("#manageNo_label").bind("dblTap", function() {
+	if (!scanOptiont.op_isDirectInput) return false;
+	if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android)/i)) {
+		// スマホ・タブレット（iOS・Android）の場合の処理を記述
+		modeInput($("#manageNo"), false);
+	}
+});
+//機器コード欄から抜けたとき
+$("#manageNo").on('blur', function() {
+	modeInput($("#manageNo"), true);
+});
+
+//テストモード
+$("#test").on('dblclick', function() {
+
+	if (!scanOptiont.op_isTestMode) return false;
+	scanOptiont.test();
+});
+
+$("#test").bind("dblTap", function() {
+
+	if (!scanOptiont.op_isTestMode) return false;
+	if (navigator.userAgent.match(/(iPhone|iPad|iPod|Android)/i)) {
+		// スマホ・タブレット（iOS・Android）の場合の処理を記述
+		scanOptiont.test();
+	}
+});
+
+//カメラ起動中のままブラウザを再表示した場合、iphoneだとカメラ映像の
+//アスペクト比がおかしくなるのでスキャン再起動
+$(document).on('visibilitychange', function() {
+
+    if(document.visibilityState == 'hidden') {
+    } else {
+    	if (qrScan.localStream) {
+	    	document.getElementById("cStart").click();
+    	}
+    }
+});
+
+//ロケーション変更時
+//$("#locationCd").on('propertychange change click keyup input paste', function() {
+/*
+$("#locationCd").on('change click paste', function() {
+	//document.getElementById("locationCd").addEventListener('propertychange change click keyup input paste',function(){
+	//設置場所・ロケーション名を取得・表示
+	$.ajax({
+		"async": false,
+		"type": 'POST',
+		"url": '/LeaseAssetManagementQRScan/codeScan/setLocationInfo',
+		"dataType": 'json',
+		"data": {
+			locationCd: $("#locationCd").val()
+		},
+		success: function(data, textStatus, jqXHR) {
+			//戻り値を表示
+			var place = "";
+
+			//ロケーション入力がない時
+			if ($("#locationCd").val() == ""){
+
+				place = "";
+
+			//ロケーションコードが認識できない時
+		 	} else if (data[0] == ""){
+
+				place = 'ロケーションコードが認識できません';
+
+			//正常時
+			} else if (data[0] != ""){
+
+				place = data[0] + " - " + data[1];
+
+			}
+			$("#location_area").text(place);
+
+		},
+		timeout: 5000,
+		
+		error: function(jqXHR, textStatus, errorThrown) {
+			if (textStatus == "timeout") {
+				alert("response timeout エラーが発生しました。もう一度行って下さい。");
+			} else {
+				alert("* error[" + jqXHR.status + "],[" + jqXHR.statusText + "],[" +
+					textStatus + "], " + errorThrown.message);
+			}
+		}
+	});
+	//状態によってメッセージの設定
+	setMessageByState();
+});
+*/
+
+//機器変更時
+//$("#manageNo").on('propertychange change click keyup input paste', function() {
+$("#manageNo").on('change click paste', function() {
+	//document.getElementById("locationCd").addEventListener('propertychange change click keyup input paste',function(){
+	//状態によってメッセージの設定
+	setMessageByState();
+});
+
+
+//メッセージの設定
+function setMessageByState() {
+	//状態によってメッセージの設定内容を変更する。
+	if (!qrScan.localStream) {
+		//カメラ未起動
+
+		//メッセージ表示(Message:カメラを起動してください)
+		setMessage('カメラを起動してください', $(
+			"#info_messages"), 1);
+	} else if ($("#locationCd").val() == "") {
+		//ロケーション入力なし
+
+		//メッセージ表示(Message:ロケーションバーコードを読み込んでください)
+		setMessage('ロケーションバーコードを読み込んでください', $(
+			"#info_messages"), 1);
+	} else if ($("#manageNo").val() == "") {
+		//棚卸入力なし
+
+		//メッセージ表示(Message:機器バーコードを読み込んでください)
+		setMessage('機器バーコードを読み込んでください', $(
+			"#info_messages"), 1);
+	} else if ($("#manageNo").val() != "") {
+		//棚卸入力あり
+
+		//メッセージ表示(Message:「棚卸処理」ボタンをクリックして棚卸処理を実行してください)
+		setMessage('「棚卸処理」ボタンから棚卸処理を実行してください', $(
+			"#info_messages"), 1);
+	}
+
+
+	//カメラ側のインフォメーションに動きが有ったら棚卸メッセージ消去
+	setMessage("", $("#messages"), 1);
+
+}
+
+//メッセージの設定
+function setMessage(message, obj, colorType) {
+	//color:文字色 1:黒 0:青 -1:赤
+	var color
+	if (colorType == 1) {
+		color = "#000000";
+	}else if (colorType == 0) {
+		color = "#0000ff";
+	}else if (colorType == -1) {
+		color = "#ff0000";
+	}else {
+		color = "#000000";
+	}
+
+	//引数のメッセージを設定
+	var msgTag = $("<font>").attr("color", color).text(message);
+	obj
+		.html(msgTag)
+		.trigger('change');
+}
+
+/******************************/
+/* 棚卸処理 */
+/******************************/
+document.getElementById("stocktaking").addEventListener('click', function() {
+
+	//button→divタグに変更
+	//$('#stocktaking').prop('disabled', true);
+	$('#stocktaking').attr('disabled', true);
+
+	//そのままajaxを呼ぶとdisabled = falseが動いてしまうため、setTimeoutで遅延させて呼び出す。
+	setTimeout(function() {
+		$.ajax({
+			"async": false,
+			"type": 'POST',
+			"url": '/LeaseAssetManagementQRScan/codeScan/updateStocktaking',
+			"dataType": 'json',
+			"data": {
+				tisyKisyCd: $('#listKisyCd').val(),
+				tisyHnbCd: $('#listHnbCd').val(),
+				tisyBuCd: $('#listBuCd').val(),
+				tisyShokCd: $('#listShokCd').val(),
+				tisyBmnCd: $('#listBmnCd').val(),
+				locationCd: $('#locationCd').val(),
+				manageNo: $('#manageNo').val(),
+				semester: $('#year').val() + $('#half').val()
+			},
+			success: function(data, textStatus, jqXHR) {
+				//戻り値
+				// dataFlg(0:正常/-1:エラー)
+				// message(正常時/エラー時のメッセージ)
+
+				//戻り値(メッセージ)を表示
+				setMessage(data.message, $("#messages"), data.dataFlg);
+				//機器入力欄クリア
+				$("#manageNo").val("");
+
+				//button→divタグに変更
+				//$('#stocktaking').prop('disabled', false);
+				$('#stocktaking').attr('disabled', false);
+
+ 				setItemByLocalStorage(data);
+
+			},
+			timeout: 5000,
+			
+			error: function(jqXHR, textStatus, errorThrown) {
+				if (textStatus == "timeout") {
+					alert("response timeout エラーが発生しました。もう一度行って下さい。");
+				} else {
+					alert("* error[" + jqXHR.status + "],[" + jqXHR.statusText + "],[" +
+						textStatus + "], " + errorThrown.message);
+
+					setTimeout(function() {
+				    	resumeVideoAfterClear();
+					}, 100);
+	
+					if (jqXHR.status == "403") {
+						//ログインセッションエラーの場合はエラー画面へ
+						location='/LeaseAssetManagementQRScan/sessionError/';
+					}
+				}
+
+				//button→divタグに変更
+				//$('#stocktaking').prop('disabled', false);
+				$('#stocktaking').attr('disabled', false);
+
+			}
+		});
+	}, 500);
+}, false);
+//},false);
+
+//棚卸処理ボタンを長押し
+$("#stocktaking_hold").bind("hold", function() {
+
+	if (!scanOptiont.op_isLogMode) return false;
+
+	var ele = document.getElementById('stocktakingMenu');
+	if (ele.style.display == 'none'){
+		ele.style.display='block';
+	}else{
+		ele.style.display='none';
+	}
+
+});
+
+//棚卸処理の実行ログ取得
+function setItemByLocalStorage(data) {
+
+	if (!scanOptiont.op_isLogGet) return false;
+
+	var kensu = 50;
+
+	var record = null;
+
+	try {
+		//前回の保存された値の取得
+		record = JSON.parse(localStorage.getItem('Record'));
+
+	} catch (e) {
+		console.log(e);
+	}
+
+	//取得できない場合初期化
+	if (record == null){
+		record = [];
+	}
+
+	var date = new Date();
+
+	// 年
+	var year = date.getFullYear();
+
+	// 月
+	var month = ("0" + (date.getMonth() + 1)).slice(-2);
+
+	// 日
+	var day = ("0" + date.getDate()).slice(-2);
+
+	// 時
+	var hour = ("0" + date.getHours()).slice(-2);
+
+	// 分
+	var minute = ("0" + date.getMinutes()).slice(-2);
+
+	// 秒
+	var second = ("0" + date.getSeconds()).slice(-2);
+
+	// 文字列結合
+	time = year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + second ;
+
+	//連想配列の追加
+ 	record.push({moment:time, stateFlg:data.dataFlg, stateMessage:data.message});
+
+	// 要素数を取得
+	var leng = Object.keys(record).length;
+
+	//50件まで残して51件目から古いものを削除
+	if (leng > kensu){
+		for(var i = kensu; i < leng; i++){
+			record.shift();
+		}
+	}
+
+	// データの保存
+	localStorage.setItem('Record', JSON.stringify(record));
+
+}
+
+//棚卸処理の実行ログの表示
+function setChildTagByLogList() {
+
+	var record = null;
+
+	try {
+		//前回の保存された値の取得
+		record = JSON.parse(localStorage.getItem('Record'));
+
+	} catch (e) {
+		console.log(e);
+	}
+
+	//取得できない場合初期化
+	if (record == null){
+		record = [];
+	}
+
+	// タグを追加する親要素をid属性を指定して取得
+	let target = document.getElementById('logList');
+	//子要素を全て削除
+	while(target.lastChild){
+		target.removeChild(target.lastChild);
+	}
+
+	for (var i = 0; i < record.length; i++) {
+
+		// 一番上の子要素<li>の作成
+		var newTag = document.createElement("li");
+
+		// <li>子要素の一つ目のdiv作成
+		var newDiv1 = document.createElement("div");
+		// class属性の追加
+		 newDiv1.setAttribute("class", "marker bg" + record[i].stateFlg);
+	    // <li>の子要素として追加
+	    newTag.appendChild(newDiv1);
+
+		// <li>子要素の二つ目のdiv作成
+		var newDiv2 = document.createElement("div");
+		// class属性の追加
+		newDiv2.setAttribute("class", "itembox");
+
+
+		// <li>子要素の三つ目のdiv作成
+		var newDiv3 = document.createElement("div");
+		newDiv3.setAttribute("class", "item1");
+		newDiv3.textContent = record[i].moment;
+		// 二つ目のdivの子要素として追加
+		newDiv2.appendChild(newDiv3);
+
+		// <li>子要素の四つ目のdiv作成
+		var newDiv4 = document.createElement("div");
+		newDiv4.setAttribute("class", "item2");
+		newDiv4.textContent = record[i].stateMessage;
+		// 二つ目のdivの子要素として追加
+		newDiv2.appendChild(newDiv4);
+
+
+		// <li>の子要素として追加
+		newTag.appendChild(newDiv2);
+
+		// <li>をlogList子要素の先頭に追加
+		target.insertBefore(newTag, target.children[0]);
+ 	}
+}
+
+
+function resumeVideoAfterClear() {
+    // iOS Safari のみ対象
+    if (!/iPhone|iPad|iPod/i.test(navigator.userAgent)) return;
+
+    if (qrScan && qrScan.video && qrScan.video.srcObject) {
+        const p = qrScan.video.play();
+        if (p && typeof p.catch === 'function') {
+            p.catch(function(){ /* Safari対策：失敗しても無視 */ });
+        }
+    }
+}
+
+
+</script>
+
+
+
+</body></html>
